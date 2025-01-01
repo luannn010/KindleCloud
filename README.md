@@ -1,2 +1,2 @@
 # KindleCloud
-A project for extract metadata from PDF ebooks using OpenAI API keys server which will be deployed to GCP and use Google script app to automatically send ebooks to Kindle
+A python server which will automatically get metadata of ebooks in pdf using OpenAI API key which will be used to send to Kindle using Email service on Google Scripts App

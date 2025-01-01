@@ -1,0 +1,1 @@
+from pdf_manager.manager import PDFManager
