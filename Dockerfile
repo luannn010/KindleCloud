@@ -35,6 +35,9 @@ RUN pip install --no-cache-dir python-dotenv
 COPY --from=builder /root/.local /root/.local
 COPY . .
 
+# Create and populate .env file with environment variables
+RUN printenv > .env
+
 # Expose the FastAPI default port
 EXPOSE 8000
 
