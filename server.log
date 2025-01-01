@@ -11,3 +11,9 @@
 2025-01-02 07:59:41,153 - root - INFO - File uploaded: ./uploaded_files/fundamentals-of-data-engineering.pdf
 2025-01-02 08:00:19,522 - root - INFO - Checking metadata for PDF: ./processed_files/Fundamentals Of Data Engineering.pdf
 2025-01-02 08:00:20,881 - root - INFO - Checking metadata for PDF: ./processed_files/Fundamentals Of Data Engineering.pdf
+2025-01-02 09:54:07,535 - root - INFO - Checking metadata for PDF: ./processed_files/Fundamentals Of Data Engineering.pdf
+2025-01-02 09:56:45,760 - root - INFO - Checking metadata for PDF: ./processed_files/Fundamentals Of Data Engineering.pdf
+2025-01-02 09:58:44,046 - root - INFO - Checking metadata for PDF: ./processed_files/Fundamentals Of Data Engineering.pdf
+2025-01-02 10:00:23,307 - root - INFO - Checking metadata for PDF: ./processed_files/Fundamentals Of Data Engineering.pdf
+2025-01-02 10:00:59,186 - root - ERROR - Unexpected error when checking PDF metadata: 404: File not found. Please process the file first.
+2025-01-02 10:01:15,495 - root - INFO - Checking metadata for PDF: ./processed_files/Fundamentals Of Data Engineering.pdf

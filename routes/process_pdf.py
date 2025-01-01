@@ -1,8 +1,8 @@
 import os
 import shutil
 import logging
-from fastapi import APIRouter, File, UploadFile, HTTPException, Query
-from fastapi.responses import FileResponse
+from fastapi import APIRouter, File, UploadFile, HTTPException, Query, Body
+from fastapi.responses import FileResponse, JSONResponse
 from pdf_manager.manager import PDFManager
 from pdf_manager.check_metadata import check_pdf_metadata
 
@@ -79,12 +79,18 @@ def upload_and_process_file(file: UploadFile = File(...), n_pages: int = 5):
         logging.error(f"Error uploading and processing PDF: {e}")
         raise HTTPException(status_code=500, detail=f"Error uploading and processing PDF: {e}")
 
-@router.get("/pdf-check")
-def check_metadata(file_name: str = Query(..., description="Name of the processed PDF file")):
+@router.post("/pdf-check")
+def check_metadata(file_info: dict = Body(..., example={"file_name": "example file.pdf"})):
     """
     Endpoint to check and return metadata of a processed PDF file.
+    Accepts JSON input for file name to handle spaces in key-value pairs.
     """
     try:
+        # Extract file name from JSON body
+        file_name = file_info.get("file_name")
+        if not file_name:
+            raise HTTPException(status_code=400, detail="File name is required in the JSON body.")
+
         file_path = os.path.join(PROCESSED_DIR, file_name)
         if not os.path.exists(file_path):
             raise HTTPException(status_code=404, detail="File not found. Please process the file first.")
@@ -94,10 +100,10 @@ def check_metadata(file_name: str = Query(..., description="Name of the processe
         # Call the check_pdf_metadata function
         metadata = check_pdf_metadata(file_path)
 
-        return {
+        return JSONResponse({
             "message": "Metadata checked successfully.",
             "metadata": metadata
-        }
+        })
 
     except ValueError as e:
         logging.error(f"Error when checking PDF metadata: {e}")
@@ -125,3 +131,21 @@ def download_pdf(file_name: str = Query(..., description="Name of the processed 
     except Exception as e:
         logging.error(f"Error serving PDF file for download: {e}")
         raise HTTPException(status_code=500, detail=f"Error serving PDF file: {e}")
+@router.delete("/pdf-delete")
+def delete_pdf(file_name: str = Query(..., description="Name of the PDF file to delete")):
+    """
+    Endpoint to delete a specified PDF file from the processed directory.
+    """
+    try:
+        file_path = os.path.join(PROCESSED_DIR, file_name)
+        if not os.path.exists(file_path):
+            raise HTTPException(status_code=404, detail="File not found.")
+
+        os.remove(file_path)
+        logging.info(f"Deleted PDF file: {file_path}")
+
+        return JSONResponse({"message": f"File '{file_name}' deleted successfully."})
+
+    except Exception as e:
+        logging.error(f"Error deleting PDF file: {e}")
+        raise HTTPException(status_code=500, detail=f"Error deleting PDF file: {e}")
