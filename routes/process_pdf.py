@@ -99,10 +99,12 @@ def check_metadata(file_name: str = Query(..., description="Name of the processe
             "metadata": metadata
         }
 
-    except Exception as e:
+    except ValueError as e:
         logging.error(f"Error when checking PDF metadata: {e}")
-        raise HTTPException(status_code=500, detail=f"Error checking PDF metadata: {e}")
-
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        logging.error(f"Unexpected error when checking PDF metadata: {e}")
+        raise HTTPException(status_code=500, detail="An unexpected error occurred while checking PDF metadata.")
 @router.get("/pdf-download")
 def download_pdf(file_name: str = Query(..., description="Name of the processed PDF file")):
     """
