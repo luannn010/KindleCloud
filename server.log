@@ -8,3 +8,6 @@
 2025-01-01 20:14:07,548 - root - INFO - File uploaded: ./uploaded_files/18 quy luat bat bien phat trien thuong hieu cong ty.pdf
 2025-01-01 20:14:08,439 - root - INFO - File uploaded: ./uploaded_files/18 quy luat bat bien phat trien thuong hieu cong ty.pdf
 2025-01-01 20:17:35,031 - root - INFO - File uploaded: ./uploaded_files/7 thoi quen de thanh dat.pdf
+2025-01-02 07:59:41,153 - root - INFO - File uploaded: ./uploaded_files/fundamentals-of-data-engineering.pdf
+2025-01-02 08:00:19,522 - root - INFO - Checking metadata for PDF: ./processed_files/Fundamentals Of Data Engineering.pdf
+2025-01-02 08:00:20,881 - root - INFO - Checking metadata for PDF: ./processed_files/Fundamentals Of Data Engineering.pdf
