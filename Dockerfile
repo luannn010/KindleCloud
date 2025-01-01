@@ -39,7 +39,7 @@ COPY . .
 RUN printenv > .env
 
 # Expose the FastAPI default port
-EXPOSE 8000
+EXPOSE 8080
 
 # Command to run the FastAPI app
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080"]
