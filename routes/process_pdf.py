@@ -1,8 +1,10 @@
 import os
 import shutil
 import logging
+from datetime import datetime, timedelta
 from fastapi import APIRouter, File, UploadFile, HTTPException, Query, Body
 from fastapi.responses import FileResponse, JSONResponse
+from fastapi_utils.tasks import repeat_every
 from pdf_manager.manager import PDFManager
 from pdf_manager.check_metadata import check_pdf_metadata
 
@@ -13,6 +15,35 @@ router = APIRouter()
 # Ensure the upload and processed directories exist
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 os.makedirs(PROCESSED_DIR, exist_ok=True)
+
+def clean_old_files(directory: str, days: int = 30):
+    """
+    Remove files older than the specified number of days from the given directory.
+    """
+    try:
+        now = datetime.now()
+        cutoff_date = now - timedelta(days=days)
+
+        for file_name in os.listdir(directory):
+            file_path = os.path.join(directory, file_name)
+            if os.path.isfile(file_path):
+                file_mtime = datetime.fromtimestamp(os.path.getmtime(file_path))
+                if file_mtime < cutoff_date:
+                    os.remove(file_path)
+                    logging.info(f"Deleted old file: {file_path}")
+
+    except Exception as e:
+        logging.error(f"Error cleaning directory {directory}: {e}")
+
+@router.on_event("startup")
+@repeat_every(seconds=86400)  # Run every 24 hours
+def schedule_cleanup():
+    """
+    Periodically clean the upload and processed directories of files older than 30 days.
+    """
+    logging.info("Starting scheduled cleanup task.")
+    clean_old_files(UPLOAD_DIR, days=30)
+    clean_old_files(PROCESSED_DIR, days=30)
 
 @router.get("/pdf-list")
 def list_uploaded_files():
@@ -111,6 +142,7 @@ def check_metadata(file_info: dict = Body(..., example={"file_name": "example fi
     except Exception as e:
         logging.error(f"Unexpected error when checking PDF metadata: {e}")
         raise HTTPException(status_code=500, detail="An unexpected error occurred while checking PDF metadata.")
+
 @router.get("/pdf-download")
 def download_pdf(file_name: str = Query(..., description="Name of the processed PDF file")):
     """
@@ -131,6 +163,7 @@ def download_pdf(file_name: str = Query(..., description="Name of the processed 
     except Exception as e:
         logging.error(f"Error serving PDF file for download: {e}")
         raise HTTPException(status_code=500, detail=f"Error serving PDF file: {e}")
+
 @router.delete("/pdf-delete")
 def delete_pdf(file_name: str = Query(..., description="Name of the PDF file to delete")):
     """
